@@ -1,0 +1,98 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Safe Driving Awareness App</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"/>
+    <!--    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">-->
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
+            integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+<form id="routeForm" action="#" th:action="@{/}" th:object="${routeInput}" method="post">
+    <div>
+        <label for="sourceInput">Start:</label>
+        <input id="sourceInput" type="text" th:field="*{source}"/>
+    </div>
+    <br/>
+    <div>
+        <label for="destinationInput">End:</label>
+        <input id="destinationInput" type="text" th:field="*{destination}"/>
+    </div>
+    <br/>
+    <button id="submitButton" type="submit">Submit</button>
+</form>
+
+<div>
+    <h4>Autocomplete results</h4>
+    <select class="form-control" id="autocompleteResult">
+        <option value="0">Select option</option>
+        <option th:each="option : ${autocompleteOptions}"
+                th:value="${option}"
+                th:text="${option.description}"></option>
+    </select>
+</div>
+
+<div id="map" style="width: 75%; height: 550px;"></div>
+
+<script th:inline="javascript">
+    $(document).on('keydown', '#sourceInput', function(event) {
+        if ((event.ctrlKey && event.code == 'Space') && $('#sourceInput').val().trim().length > 0) {
+            var inputValue = $('#sourceInput').val();
+            $.get('/autocomplete', { query: inputValue }).done(function(fragment){
+                $("#autocompleteResult").replaceWith(fragment);
+            });
+        }
+    });
+</script>
+
+<script th:inline="javascript">
+    $(document).on('keydown', '#destinationInput', function(event) {
+        if ((event.ctrlKey && event.code == 'Space') && $('#destinationInput').val().trim().length > 0) {
+            var inputValue = $('#destinationInput').val();
+            $.get('/autocomplete', { query: inputValue }).done(function(fragment){
+                $("#autocompleteResult").replaceWith(fragment);
+            });
+        }
+    });
+</script>
+
+<script th:inline="javascript">
+    $(document).on('change', '#autocompleteResult', function(event) {
+        var selectedValue = $('#autocompleteResult option:selected').val();
+        console.log(selectedValue);
+    });
+</script>
+
+<!--<script th:inline="javascript">-->
+<!--    // TODO add default centering-->
+<!--    // var map = L.map('map').setView([44.907852, 7.673789],16);-->
+<!--    var map = L.map('map', { doubleClickZoom: false }).locate({ setView: true, maxZoom: 16 });-->
+<!--    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {-->
+<!--        attribution: '© OpenStreetMap contributors'-->
+<!--    }).addTo(map);-->
+
+<!--    var control = L.Routing.control({-->
+<!--        routeWhileDragging: true,-->
+<!--        geocoder: L.Control.Geocoder.nominatim({-->
+<!--            options: {-->
+<!--                serviceUrl: "http://localhost:8081/"-->
+<!--            }-->
+<!--        })-->
+<!--    }).addTo(map);-->
+<!--    control.on('routesfound', function (e) {-->
+<!--        var routes = e.routes;-->
+<!--        var summary = routes[0].summary;-->
+<!--        console.log(summary);-->
+<!--        alert('Total distance is ' + summary.totalDistance / 1000 + ' km and total time is ' + Math.round(summary.totalTime % 3600 / 60) + ' minutes');-->
+<!--    })-->
+<!--</script>-->
+
+</body>
+
+</html>

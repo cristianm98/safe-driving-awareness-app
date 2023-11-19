@@ -1,0 +1,5 @@
+spring:
+  output.ansi.enabled: always
+service:
+  nominatim:
+    api: http://localhost:8081
