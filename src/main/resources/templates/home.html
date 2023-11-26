@@ -6,37 +6,63 @@
     <title>Safe Driving Awareness App</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"/>
-    <!--    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous">
     <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
-            integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
 </head>
 
 <body>
-<form id="routeForm" action="#" th:action="@{/}" th:object="${routeInput}" method="post">
-    <div>
-        <label for="sourceInput">Start:</label>
-        <input id="sourceInput" type="text" th:field="*{source}"/>
-    </div>
-    <br/>
-    <div>
-        <label for="destinationInput">End:</label>
-        <input id="destinationInput" type="text" th:field="*{destination}"/>
-    </div>
-    <br/>
-    <button id="submitButton" type="submit">Submit</button>
-</form>
-
-<div>
-    <h4>Autocomplete results</h4>
-    <select class="form-control" id="autocompleteResult">
-        <option value="0">Select option</option>
-        <option th:each="option : ${autocompleteOptions}"
-                th:value="${option}"
-                th:text="${option.description}"></option>
-    </select>
+<div class="d-flex m-3 justify-content-start">
+    <form id="routeForm" action="#" th:action="@{/}" th:object="${routeInput}" method="post">
+        <div class="mb-1">
+            <label for="sourceInput" class="form-label">Source:</label>
+            <input id="sourceInput" type="text" th:field="*{source}" class="form-control"/>
+        </div>
+        <br/>
+        <div class="mb-1">
+            <label for="destinationInput" class="form-label">Destination:</label>
+            <input id="destinationInput" type="text" th:field="*{destination}" class="form-control"/>
+        </div>
+        <br/>
+        <button id="submitButton" type="submit" class="btn btn-primary">Submit</button>
+    </form>
 </div>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="autocompleteOffcanvas" aria-labelledby="autocompleteOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h4 class="offcanvas-title" id="autocompleteOffcanvasLabel">Autocomplete results</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div>
+            Found the following locations for your input
+        </div>
+        <div class="dropdown mt-3">
+            <select class="form-select" size="10" id="autocompleteResult">
+                <option th:each="option : ${autocompleteOptions}"
+                        th:value="${option}"
+                        th:text="${option.description}"></option>
+            </select>
+        </div>
+    </div>
+</div>
+
+
+<!--<div>-->
+<!--    <h4>Autocomplete results</h4>-->
+<!--    <select class="form-control" id="autocompleteResult">-->
+<!--        <option value="0">Select option</option>-->
+<!--        <option th:each="option : ${autocompleteOptions}"-->
+<!--                th:value="${option}"-->
+<!--                th:text="${option.description}"></option>-->
+<!--    </select>-->
+<!--</div>-->
 
 <div id="map" style="width: 75%; height: 550px;"></div>
 
@@ -47,6 +73,10 @@
             $.get('/autocomplete', { query: inputValue }).done(function(fragment){
                 $("#autocompleteResult").replaceWith(fragment);
             });
+            const autocompleteOffcanvsElement = $('#autocompleteOffcanvas');
+            console.log(autocompleteOffcanvsElement);
+            const autocompleteOffcanvasObj = new bootstrap.Offcanvas(autocompleteOffcanvsElement);
+            autocompleteOffcanvasObj.show();
         }
     });
 </script>
