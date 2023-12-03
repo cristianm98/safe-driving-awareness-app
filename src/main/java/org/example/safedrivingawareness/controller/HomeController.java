@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.safedrivingawareness.model.AutoCompleteEntry;
 import org.example.safedrivingawareness.model.RouteInput;
-import org.example.safedrivingawareness.service.GraphHopperService;
+import org.example.safedrivingawareness.service.GraphHopperRouteService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final GraphHopperService graphHopperService;
+    private final GraphHopperRouteService graphHopperService;
 
     @GetMapping("/")
     public String home(Model model) {
