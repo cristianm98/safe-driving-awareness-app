@@ -18,7 +18,7 @@ public class GraphHopperRestController {
     public ResponseEntity<GraphHopperRouteResult> calculateRoute() {
         GraphHopperRouteResult graphHopperRouteResult = graphHopperRouteService.calculateRoute(
                 new Coordinate(47.6565584f, 23.5719843f),
-                new Coordinate(46.769379f, 23.5899542f), 10);
+                new Coordinate(46.769379f, 23.5899542f), 30);
         return ResponseEntity.ok().body(graphHopperRouteResult);
     }
 }
