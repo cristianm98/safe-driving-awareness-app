@@ -27,6 +27,7 @@ public class GhProfileFactory {
     @PostConstruct
     private void initialize() {
         log.info("Initializing map with speed multipliers for custom GraphHopper profiles");
+        SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED, 100);
         SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_10_PC_INC, 110);
         SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_20_PC_INC, 120);
         SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_30_PC_INC, 130);
@@ -34,6 +35,7 @@ public class GhProfileFactory {
         SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_50_PC_INC, 150);
 
         log.info("Initializing map containing predefined GraphHopper profiles");
+        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED, createProfile(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED));
         GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_10_PC_INC, createProfile(GhProfileType.CUSTOM_CAR_SPEED_10_PC_INC));
         GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_20_PC_INC, createProfile(GhProfileType.CUSTOM_CAR_SPEED_20_PC_INC));
         GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_30_PC_INC, createProfile(GhProfileType.CUSTOM_CAR_SPEED_30_PC_INC));

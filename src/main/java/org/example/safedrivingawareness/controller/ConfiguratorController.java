@@ -20,7 +20,7 @@ public class ConfiguratorController {
         model.addAttribute("breadcrumbs", new String[]{"Configurator", "Router", "Summary"});
         model.addAttribute("speedLimits", speedLimitService.calculateSpeedLimits(0));
         model.addAttribute("speedIncreaseOptions", new String[]{"0", "10", "20", "30", "40", "50"});
-        // TODO compute new speed limits and add to model => needs to be done based on input => fragment rendering is needed
+        model.addAttribute("penalties");
         // TODO add penalties depending on speed and add to model
         return "speed-configurator-view";
     }

@@ -35,83 +35,95 @@
         </label>
     </div>
 </div>
-<div id="collapseDiv" class="collapse">
-    <div id="infoDiv" class="d-flex flex-row">
-        <div id="speedLimitsCard" class="card m-2 w-50">
-            <div class="card-header">
-                Speed limits used
+<div id="accordionDiv" class="accordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="speedLimitsAccordionItem">
+            <button class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#speedLimitsCollapse"
+                    aria-expanded="false"
+                    aria-controls="speedLimitsCollapse">
+                Show speed limits
+            </button>
+        </h2>
+        <div id="speedLimitsCollapse"
+             class="accordion-collapse collapse hide"
+             aria-labelledby="speedLimitsAccordionItem"
+             data-bs-parent="#accordionDiv">
+            <div class="accordion-body">
+                <div id="infoDiv" class="d-flex flex-row">
+                    <div id="speedLimitsCard" class="card m-2 w-50">
+                        <div class="card-header">
+                            Speed limits used
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">These are the new speed values on different road types which will be
+                                used to calculate your route:</h6>
+                            <ul class="list-group list-group-flush">
+                                <li th:each="entry: ${speedLimits}" class="list-group-item">
+                                    <span th:text="${entry.key.displayText}"></span>: <span
+                                        th:text="${entry.value}"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="penaltiesCard" class="card m-2 flex-grow-1">
+                        <div class="card-header">
+                            Penalties
+                        </div>
+                        <p>penalties</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <h6 class="card-title">These are the new speed values on different road types which will be used to calculate your route:</h6>
-                <ul class="list-group list-group-flush">
-                    <li th:each="entry: ${speedLimits}" class="list-group-item">
-                        <span th:text="${entry.key.displayText}"></span>: <span th:text="${entry.value}"></span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div id="penaltiesCard" class="card m-2 flex-grow-1">
-            <div class="card-header">
-                Penalties
-            </div>
-            <p>penalties</p>
         </div>
     </div>
-</div>
-<div id="map" style="width: 75%; height: 550px; display: none;"></div>
-<button class="btn btn-primary" type="submit">Next</button>
-<script>
-    var selectedOption = undefined;
+    // TODO add another item for penalties
 
-    function showCollapse() {
-        let element = document.querySelector('#collapseDiv');
-        let bsCollapse = bootstrap.Collapse.getInstance(element);
-        if (bsCollapse === null) {
-            bsCollapse = new bootstrap.Collapse(element, {
-                toggle: false
-            })
-        }
-        bsCollapse.show();
-    }
+</div>
+<div class="d-flex justify-content">
+    <div id="map" class="m-3 w-75" style="height: 600px;"></div>
+</div>
+<script>
+    var prevSelectedOption = undefined;
 
     $(document).ready(function () {
         $('[id*=speedIncreaseRadioBtn]').on('click', function () {
             var inputValue = $(this).val();
-            console.log("inputValue=" + inputValue + "\nselectedOption=" + selectedOption);
-            if (inputValue != selectedOption) {
+            if (inputValue != prevSelectedOption) {
                 $.get('/configurator/speed-info', { option: inputValue }).done(function (fragment) {
                     $("#infoDiv").replaceWith(fragment);
                 });
-                showCollapse();
             }
-            selectedOption = inputValue;
+            prevSelectedOption = inputValue;
         })
     });
 </script>
 
 <script th:inline="javascript">
-    // TODO add default centering
-    var map = L.map('map').setView([47.6565584, 23.5719843],16);
-<!--    var map = L.map('map', { doubleClickZoom: false }).locate({ setView: true, maxZoom: 16 });-->
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+    <!--    var map = L.map('map').setView([47.6565584, 23.5719843],16);-->
+        var map = L.map('map', { doubleClickZoom: false })
+            .setView([45.9432, 24.9668], 7)
+            .locate({ setView: true, maxZoom: 16 });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-    var control = L.Routing.control({
-        routeWhileDragging: true,
-        geocoder: L.Control.Geocoder.nominatim({
-                serviceUrl: "http://localhost:8081/"
-        }),
-        router: new L.Routing.GraphHopper(undefined, {
-             serviceUrl: 'http://localhost:8080/route'
-        }),
-    }).addTo(map);
-    control.on('routesfound', function (e) {
-        var routes = e.routes;
-        var summary = routes[0].summary;
-        console.log(summary);
-        alert('Total distance is ' + summary.totalDistance / 1000 + ' km and total time is ' + Math.round(summary.totalTime % 3600 / 60) + ' minutes');
-    });
+        var control = L.Routing.control({
+            routeWhileDragging: true,
+            geocoder: L.Control.Geocoder.nominatim({
+                    serviceUrl: "http://localhost:8081/"
+            }),
+            router: new L.Routing.GraphHopper(undefined, {
+                 serviceUrl: 'http://localhost:8080/route'
+            }),
+        }).addTo(map);
+        control.on('routesfound', function (e) {
+            var routes = e.routes;
+            var summary = routes[0].summary;
+            console.log(summary);
+            alert('Total distance is ' + summary.totalDistance / 1000 + ' km and total time is ' + Math.round(summary.totalTime % 3600 / 60) + ' minutes');
+        });
 </script>
 
 </body>

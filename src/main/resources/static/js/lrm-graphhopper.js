@@ -425,22 +425,8 @@
                   );
                 }
 
-                baseUrl = this.options.serviceUrl + "?" + locs.join("&");
-
-                return (
-                  baseUrl +
-                  L.Util.getParamString(
-                    L.extend(
-                      {
-                        instructions: computeInstructions,
-                        type: "json",
-                        key: this._apiKey,
-                      },
-                      this.options.urlParameters
-                    ),
-                    baseUrl
-                  )
-                );
+                baseUrl = this.options.serviceUrl + "?" + locs.join("&") + "&speedIncrease=" + prevSelectedOption;
+                return baseUrl;
               },
 
               _convertInstructions: function (instructions) {

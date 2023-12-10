@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public enum GhProfileType {
 
+    CUSTOM_CAR_DEFAULT_SPEED,
     CUSTOM_CAR_SPEED_10_PC_INC,
     CUSTOM_CAR_SPEED_20_PC_INC,
     CUSTOM_CAR_SPEED_30_PC_INC,
@@ -13,6 +14,7 @@ public enum GhProfileType {
 
     public static GhProfileType fromSpeedPc(Integer speedPercentage) {
         return switch (speedPercentage) {
+            case 0 -> CUSTOM_CAR_DEFAULT_SPEED;
             case 10 -> CUSTOM_CAR_SPEED_10_PC_INC;
             case 20 -> CUSTOM_CAR_SPEED_20_PC_INC;
             case 30 -> CUSTOM_CAR_SPEED_30_PC_INC;
