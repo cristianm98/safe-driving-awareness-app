@@ -22,19 +22,14 @@ public class ConfiguratorController {
         model.addAttribute("breadcrumbs", new String[]{"Configurator", "Router", "Summary"});
         model.addAttribute("speedLimits", speedLimitService.calculateSpeedLimits(0));
         model.addAttribute("speedIncreaseOptions", new String[]{"0", "10", "20", "30", "40", "50"});
-        model.addAttribute("penalties", penaltiesService.getPenalties(0));
-        model.addAttribute("penaltyMessages", penaltiesService.getPenaltyMessages());
-        // TODO calculate chances of getting a fine
-        // TODO replace penalty with fines
-        // TODO create default profile with speed limits from romania
+        model.addAttribute("penaltyCategory", penaltiesService.findPenaltyCategory(0));
         return "speed-configurator-view";
     }
 
     @GetMapping("/speed-info")
     public String speedInfoFragment(@RequestParam Integer option, Model model){
         model.addAttribute("speedLimits", speedLimitService.calculateSpeedLimits(option));
-        model.addAttribute("penalties", penaltiesService.getPenalties(option));
-        model.addAttribute("penaltyMessages", penaltiesService.getPenaltyMessages());
+        model.addAttribute("penaltyCategory", penaltiesService.findPenaltyCategory(option));
         return "speed-configurator-view :: #infoDiv";
     }
 }

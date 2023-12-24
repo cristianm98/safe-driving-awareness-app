@@ -5,9 +5,21 @@ service:
     api: http://localhost:8081
 messages:
   penalties:
-    CATEGORY_0: No penalties for exceeding the speed limit with
-    CATEGORY_1: 2 or 3 fine points and 2 penalty points
-    CATEGORY_2: 4 or 5 fine points and 3 penalty points
-    CATEGORY_3: Between 6 and 8 fine points and 4 penalty points
-    CATEGORY_4: Between 9 and 20 fine points and 6 penalty points
-    CATEGORY_5: Between 9 and 20 fine points and suspended license
+    CATEGORY_0:
+        fine-points: 0
+        penalty-points: 0
+    CATEGORY_1:
+        fine-points: 2 to 3
+        penalty-points: 2
+    CATEGORY_2:
+        fine-points: 4 to 5
+        penalty-points: 3
+    CATEGORY_3:
+        fine-points: 6 to 8
+        penalty-points: 4
+    CATEGORY_4:
+        fine-points: 9 to 20
+        penalty-points: 6
+    CATEGORY_5:
+        fine-points: 9 to 20
+        penalty points: until license is suspended

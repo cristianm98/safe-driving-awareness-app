@@ -72,14 +72,22 @@
                         <div class="card-header">
                             Penalties
                         </div>
-                        <p>penalties</p>
+                        <div class="card-body">
+                            <h6 class="card-title">These are the penalties you risk for the chosen speed increase value:</h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <span>Fine points: </span><span th:text="${@environment.getProperty('messages.penalties.' + penaltyCategory + '.fine-points' )}"></span>
+                                </li>
+                                <li class="list-group-item">
+                                    <span>Penalty points: </span><span th:text="${@environment.getProperty('messages.penalties.' + penaltyCategory + '.penalty-points')}"></span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    // TODO add another item for penalties
-
 </div>
 <div class="d-flex justify-content">
     <div id="map" class="m-3 w-75" style="height: 600px;"></div>

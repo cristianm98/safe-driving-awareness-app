@@ -11,25 +11,17 @@ import java.util.Map;
 @Slf4j
 public class SpeedLimitService {
 
-    public Map<RoadType, Integer> calculateSpeedLimits(int speedIncreasePercentage) {
+    public Map<RoadType, Integer> calculateSpeedLimits(int speedIncreaseValue) {
         Map<RoadType, Integer> speedLimits = new EnumMap<>(RoadType.class);
         for (var roadType : RoadType.values()) {
-            int updatedSpeedLimit = calculateSpeedLimit(roadType, speedIncreasePercentage);
+            int updatedSpeedLimit = calculateSpeedLimit(roadType, speedIncreaseValue);
             speedLimits.put(roadType, updatedSpeedLimit);
         }
         return speedLimits;
     }
 
-    public Map<RoadType, Integer> getDefaultSpeedLimits() {
-        Map<RoadType, Integer> speedLimits = new EnumMap<>(RoadType.class);
-        for (var roadType : RoadType.values()) {
-            speedLimits.put(roadType, roadType.getSpeedLimit());
-        }
-        return speedLimits;
-    }
-
-    private int calculateSpeedLimit(RoadType roadType, int speedIncreasePercentage) {
+    private int calculateSpeedLimit(RoadType roadType, int speedIncreaseValue) {
         int originalSpeed = roadType.getSpeedLimit();
-        return originalSpeed + (originalSpeed * speedIncreasePercentage) / 100;
+        return originalSpeed + speedIncreaseValue;
     }
 }
