@@ -5,6 +5,8 @@ import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.ResponsePath;
 import com.graphhopper.config.Profile;
+import com.graphhopper.json.Statement;
+import com.graphhopper.util.CustomModel;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GraphHopperRouteService {
 
+    // TODO take this from properties
     private static final String ROMANIA_PBF_LATEST_PATH = "/home/cmiholca/IdeaProjects/valhalla-service/custom_files/romania-latest.osm.pbf";
 
     private final GhProfileFactory ghProfileFactory;

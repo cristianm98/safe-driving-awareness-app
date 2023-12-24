@@ -3,3 +3,11 @@ spring:
 service:
   nominatim:
     api: http://localhost:8081
+messages:
+  penalties:
+    CATEGORY_0: No penalties for exceeding the speed limit with
+    CATEGORY_1: 2 or 3 fine points and 2 penalty points
+    CATEGORY_2: 4 or 5 fine points and 3 penalty points
+    CATEGORY_3: Between 6 and 8 fine points and 4 penalty points
+    CATEGORY_4: Between 9 and 20 fine points and 6 penalty points
+    CATEGORY_5: Between 9 and 20 fine points and suspended license

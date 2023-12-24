@@ -366,7 +366,7 @@
                   alts.push({
                     name: "",
                     coordinates: coordinates,
-                    instructions: this._convertInstructions(path.instructions),
+                    instructions: [],
                     summary: {
                       totalDistance: path.distance,
                       totalTime: path.time / 1000,
@@ -427,38 +427,6 @@
 
                 baseUrl = this.options.serviceUrl + "?" + locs.join("&") + "&speedIncrease=" + prevSelectedOption;
                 return baseUrl;
-              },
-
-              _convertInstructions: function (instructions) {
-                var signToType = {
-                    "-3": "SharpLeft",
-                    "-2": "Left",
-                    "-1": "SlightLeft",
-                    0: "Straight",
-                    1: "SlightRight",
-                    2: "Right",
-                    3: "SharpRight",
-                    4: "DestinationReached",
-                    5: "WaypointReached",
-                    6: "Roundabout",
-                  },
-                  result = [],
-                  i,
-                  instr;
-
-                for (i = 0; instructions && i < instructions.length; i++) {
-                  instr = instructions[i];
-                  result.push({
-                    type: signToType[instr.sign],
-                    text: instr.text,
-                    distance: instr.distance,
-                    time: instr.time / 1000,
-                    index: instr.interval[0],
-                    exit: instr.exit_number,
-                  });
-                }
-
-                return result;
               },
 
               _mapWaypointIndices: function (

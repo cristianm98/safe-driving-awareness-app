@@ -20,6 +20,14 @@ public class SpeedLimitService {
         return speedLimits;
     }
 
+    public Map<RoadType, Integer> getDefaultSpeedLimits() {
+        Map<RoadType, Integer> speedLimits = new EnumMap<>(RoadType.class);
+        for (var roadType : RoadType.values()) {
+            speedLimits.put(roadType, roadType.getSpeedLimit());
+        }
+        return speedLimits;
+    }
+
     private int calculateSpeedLimit(RoadType roadType, int speedIncreasePercentage) {
         int originalSpeed = roadType.getSpeedLimit();
         return originalSpeed + (originalSpeed * speedIncreasePercentage) / 100;
