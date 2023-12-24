@@ -22,7 +22,7 @@
 </head>
 <body>
 <div class="d-flex justify-content">
-    <p class="m-2">Choose speed increase percentage:</p>
+    <p class="m-2">Choose speed increase:</p>
     <div th:each="speedIncreaseOption: ${speedIncreaseOptions}" class="form-check m-2">
         <input th:id="'speedIncreaseRadioBtn' + ${speedIncreaseOption}"
                th:value="${speedIncreaseOption}"
@@ -31,7 +31,7 @@
                name="speedIncreaseRadioBtn">
         <label class="form-check-label"
                th:for="'speedIncreaseRadioBtn' + ${speedIncreaseOption}"
-               th:text="'+' + ${speedIncreaseOption} + '%'">
+               th:text="'+' + ${speedIncreaseOption} + 'km/h'">
         </label>
     </div>
 </div>

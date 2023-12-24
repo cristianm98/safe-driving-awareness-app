@@ -2,6 +2,7 @@ package org.example.safedrivingawareness.component;
 
 import com.graphhopper.config.Profile;
 import com.graphhopper.json.Statement;
+import com.graphhopper.routing.ev.RoadClass;
 import com.graphhopper.util.CustomModel;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -17,38 +18,44 @@ import java.util.Map;
 public class GhProfileFactory {
 
     private static final String CAR_VEHICLE_TYPE = "car";
-    private static final Map<GhProfileType, Integer> SPEED_MULTIPLY_NORMALIZED_MAP = new EnumMap<>(GhProfileType.class);
-    private static final Map<GhProfileType, Profile> GH_PROFILE_MAP = new EnumMap<>(GhProfileType.class);
-
-    public Profile getProfile(GhProfileType profileType) {
-        return GH_PROFILE_MAP.get(profileType);
-    }
+    private static final Map<GhProfileType, Integer> SPEED_INCREASE_MAP = new EnumMap<>(GhProfileType.class);
+    private static final Map<RoadClass, Integer> DEFAULT_AVERAGE_SPEED_MAP = new EnumMap<>(RoadClass.class);
 
     @PostConstruct
     private void initialize() {
-        log.info("Initializing map with speed multipliers for custom GraphHopper profiles");
-        SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED, 100);
-        SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_10_PC_INC, 110);
-        SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_20_PC_INC, 120);
-        SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_30_PC_INC, 130);
-        SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_40_PC_INC, 140);
-        SPEED_MULTIPLY_NORMALIZED_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_50_PC_INC, 150);
+        log.info("Initializing map with default speed for each road class");
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.MOTORWAY, 100);
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.TRUNK, 70);
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.PRIMARY, 65);
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.SECONDARY, 60);
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.TERTIARY, 50);
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.UNCLASSIFIED, 30);
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.RESIDENTIAL, 30);
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.LIVING_STREET, 5);
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.SERVICE, 20);
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.ROAD, 20);
+        DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.TRACK, 15);
 
-        log.info("Initializing map containing predefined GraphHopper profiles");
-        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED, createProfile(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED));
-        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_10_PC_INC, createProfile(GhProfileType.CUSTOM_CAR_SPEED_10_PC_INC));
-        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_20_PC_INC, createProfile(GhProfileType.CUSTOM_CAR_SPEED_20_PC_INC));
-        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_30_PC_INC, createProfile(GhProfileType.CUSTOM_CAR_SPEED_30_PC_INC));
-        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_40_PC_INC, createProfile(GhProfileType.CUSTOM_CAR_SPEED_40_PC_INC));
-        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_50_PC_INC, createProfile(GhProfileType.CUSTOM_CAR_SPEED_50_PC_INC));
+        log.info("Initializing map with speed increase values for each profile type");
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED, 0);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_10_INC, 10);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_20_INC, 20);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_30_INC, 30);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_40_INC, 40);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_50_INC, 50);
     }
 
     @NotNull
-    private Profile createProfile(GhProfileType profileType) {
-        float multiplyValue = SPEED_MULTIPLY_NORMALIZED_MAP.get(profileType) / 100.0f;
-        log.debug("Multiply value used for profile: {} is: {}", profileType, multiplyValue);
+    public Profile createProfile(GhProfileType profileType) {
         CustomModel customModel = new CustomModel();
-        customModel.addToSpeed(Statement.If("true", Statement.Op.MULTIPLY, String.valueOf(multiplyValue)));
+        int speedIncreaseValue = SPEED_INCREASE_MAP.get(profileType);
+        DEFAULT_AVERAGE_SPEED_MAP.forEach((key, value) -> {
+            int defaultAverageSpeed = value;
+            float multiplyValue = 1 + speedIncreaseValue * 1.0f / defaultAverageSpeed;
+            String condition = "road_class == " + key.name();
+            customModel.addToSpeed(Statement.If(condition,
+                    Statement.Op.MULTIPLY, String.valueOf(multiplyValue)));
+        });
         log.debug("Custom model used for profile: {} is: {}", profileType, customModel);
         Profile profile = new Profile(profileType.getProfileName());
         profile.setVehicle(CAR_VEHICLE_TYPE);
@@ -56,11 +63,5 @@ public class GhProfileFactory {
         profile.setCustomModel(customModel);
         log.debug("Created custom profile: {}", profile);
         return profile;
-    }
-
-    @NotNull
-    private Profile createProfile(Integer speedPercentage) {
-        GhProfileType profileType = GhProfileType.fromSpeedPc(speedPercentage);
-        return createProfile(profileType);
     }
 }

@@ -5,12 +5,10 @@ import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.ResponsePath;
 import com.graphhopper.config.Profile;
-import com.graphhopper.json.Statement;
-import com.graphhopper.util.CustomModel;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.safedrivingawareness.component.GhProfileFactory;
+import org.example.safedrivingawareness.component.GhProfileObjectPool;
 import org.example.safedrivingawareness.dto.GraphHopperRouteResult;
 import org.example.safedrivingawareness.model.Coordinate;
 import org.example.safedrivingawareness.model.GhProfileType;
@@ -26,13 +24,13 @@ public class GraphHopperRouteService {
     // TODO take this from properties
     private static final String ROMANIA_PBF_LATEST_PATH = "/home/cmiholca/IdeaProjects/valhalla-service/custom_files/romania-latest.osm.pbf";
 
-    private final GhProfileFactory ghProfileFactory;
+    private final GhProfileObjectPool ghProfileObjectPool;
     private GraphHopper graphHopper;
 
     @PostConstruct
     private void initialize() {
         Profile[] profiles = Arrays.stream(GhProfileType.values())
-                .map(ghProfileFactory::getProfile)
+                .map(ghProfileObjectPool::getProfile)
                 .toArray(Profile[]::new);
         graphHopper = new GraphHopper();
         graphHopper.setOSMFile(ROMANIA_PBF_LATEST_PATH);
@@ -41,9 +39,9 @@ public class GraphHopperRouteService {
         graphHopper.importOrLoad();
     }
 
-    public GraphHopperRouteResult calculateRoute(Coordinate start, Coordinate end, Integer speedPercentageIncrease) {
-        log.info("Calculating route between: {} and {} coordinates with speed increased by: {} %", start, end, speedPercentageIncrease);
-        GHRequest req = buildCustomCarGhRequest(start, end, GhProfileType.fromSpeedPc(speedPercentageIncrease));
+    public GraphHopperRouteResult calculateRoute(Coordinate start, Coordinate end, Integer speedIncrease) {
+        log.info("Calculating route between: {} and {} coordinates with speed increased by: {}", start, end, speedIncrease);
+        GHRequest req = buildCustomCarGhRequest(start, end, GhProfileType.fromSpeedPc(speedIncrease));
         GHResponse rsp = graphHopper.route(req);
         ResponsePath path = rsp.getBest();
         log.info("Distance between start coordinate: {} and end coordinate: {} is: {}", start, end, path.getDistance());
