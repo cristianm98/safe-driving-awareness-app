@@ -26,10 +26,16 @@ public class ConfiguratorController {
         return "speed-configurator-view";
     }
 
-    @GetMapping("/speed-info")
-    public String speedInfoFragment(@RequestParam Integer option, Model model){
-        model.addAttribute("speedLimits", speedLimitService.calculateSpeedLimits(option));
-        model.addAttribute("penaltyCategory", penaltiesService.findPenaltyCategory(option));
-        return "speed-configurator-view :: #infoDiv";
+    @GetMapping("/speed-limits")
+    public String speedLimitsFragment(@RequestParam Integer speedValue, Model model){
+        model.addAttribute("speedLimits", speedLimitService.calculateSpeedLimits(speedValue));
+        model.addAttribute("penaltyCategory", penaltiesService.findPenaltyCategory(speedValue));
+        return "speed-configurator-view :: #speedLimitsAccordionBody";
+    }
+
+    @GetMapping("/penalties")
+    public String penaltiesFragment(@RequestParam Integer speedValue, Model model) {
+        model.addAttribute("penaltyCategory", penaltiesService.findPenaltyCategory(speedValue));
+        return "speed-configurator-view :: #penaltiesAccordionBody";
     }
 }
