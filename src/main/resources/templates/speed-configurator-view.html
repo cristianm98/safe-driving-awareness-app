@@ -21,118 +21,144 @@
     <script type="text/javascript" th:src="@{/js/lrm-graphhopper.js}"></script>
 </head>
 <body>
-<div class="d-flex justify-content">
-    <p class="m-2">Choose speed increase:</p>
-    <div th:each="speedIncreaseOption: ${speedIncreaseOptions}" class="form-check m-2">
-        <input th:id="'speedIncreaseRadioBtn' + ${speedIncreaseOption}"
-               th:value="${speedIncreaseOption}"
-               class="form-check-input"
-               type="radio"
-               name="speedIncreaseRadioBtn">
-        <label class="form-check-label"
-               th:for="'speedIncreaseRadioBtn' + ${speedIncreaseOption}"
-               th:text="'+' + ${speedIncreaseOption} + 'km/h'">
-        </label>
+<div class="d-flex flex-column justify-content-center w-100">
+    <label for="speedIncreaseInput" class="form-label m-3">Choose speed increase:</label>
+    <div class="d-flex flex-row">
+        <span class="ms-3 me-3">0</span>
+        <input type="range" class="form-range" value="0" min="0" max="55" step="5" id="speedIncreaseInput"
+               oninput="$('#speedIncreaseInputText').html($(this).val())">
+        <span class="ms-3 me-3">55</span>
     </div>
 </div>
-<div id="accordionDiv" class="accordion">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="speedLimitsAccordionItem">
-            <button class="accordion-button"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#speedLimitsCollapse"
-                    aria-expanded="false"
-                    aria-controls="speedLimitsCollapse">
-                Show speed limits
-            </button>
-        </h2>
-        <div id="speedLimitsCollapse"
-             class="accordion-collapse collapse hide"
-             aria-labelledby="speedLimitsAccordionItem"
-             data-bs-parent="#accordionDiv">
-            <div class="accordion-body">
-                <div id="infoDiv" class="d-flex flex-row">
-                    <div id="speedLimitsCard" class="card m-2 w-50">
-                        <div class="card-header">
-                            Speed limits used
-                        </div>
-                        <div class="card-body">
-                            <h6 class="card-title">These are the new speed values on different road types which will be
-                                used to calculate your route:</h6>
-                            <ul class="list-group list-group-flush">
-                                <li th:each="entry: ${speedLimits}" class="list-group-item">
-                                    <span th:text="${entry.key.displayText}"></span>: <span
-                                        th:text="${entry.value}"></span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div id="penaltiesCard" class="card m-2 flex-grow-1">
-                        <div class="card-header">
-                            Penalties
-                        </div>
-                        <div class="card-body">
-                            <h6 class="card-title">These are the penalties you risk for the chosen speed increase value:</h6>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">
-                                    <span>Fine points: </span><span th:text="${@environment.getProperty('messages.penalties.' + penaltyCategory + '.fine-points' )}"></span>
-                                </li>
-                                <li class="list-group-item">
-                                    <span>Penalty points: </span><span th:text="${@environment.getProperty('messages.penalties.' + penaltyCategory + '.penalty-points')}"></span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+<div class="d-flex justify-content-center">
+    <div class="d-flex flex-row">
+        <span class="fs-3 fw-bold" id="speedIncreaseInputText">0</span>
+        <span class="ms-1 fs-3 fw-bold">km/h</span>
+    </div>
+</div>
+<div id="infoContainer">
+    <div id="infoDiv" class="d-flex flex-row">
+        <div id="speedLimitsCard" class="card m-2 w-50"
+             th:classappend="
+             ${(penaltyCategory.name() == 'CATEGORY_0' ? 'border-success text-success' : '') +
+             (penaltyCategory.name() == 'CATEGORY_1' ? 'border-warning text-warning' : '') +
+             (penaltyCategory.name() == 'CATEGORY_2' ? 'border-danger text-danger text-opacity-75' : '') +
+             (penaltyCategory.name() == 'CATEGORY_3' ? 'border-danger text-danger' : '') +
+             (penaltyCategory.name() == 'CATEGORY_4' ? 'border-danger text-danger' : '') +
+             (penaltyCategory.name() == 'CATEGORY_5' ? 'border-danger text-danger' : '') +
+             (penaltyCategory.name() == 'CATEGORY_6' ? 'border-danger text-danger' : '')
+             }"
+        >
+            <div class="card-header">
+                Speed limits
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">These are the new speed values on different road types which will be
+                    used to calculate your route:</h6>
+                <ul class="list-group list-group-flush">
+                    <li th:each="entry: ${speedLimits}" class="list-group-item"
+                        th:classappend="
+                        ${(penaltyCategory.name() == 'CATEGORY_0' ? 'text-success' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_1' ? 'text-warning' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_2' ? 'text-danger text-opacity-75' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_3' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_4' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_5' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_6' ? 'text-danger' : '')
+                        }">
+                        <span th:text="${entry.key.displayText}"></span>: <span
+                            th:text="${entry.value}"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="penaltiesCard" class="card m-2 flex-grow-1"
+             th:classappend="
+             ${(penaltyCategory.name() == 'CATEGORY_0' ? 'border-success text-success' : '') +
+             (penaltyCategory.name() == 'CATEGORY_1' ? 'border-warning text-warning' : '') +
+             (penaltyCategory.name() == 'CATEGORY_2' ? 'border-danger text-danger text-opacity-75' : '') +
+             (penaltyCategory.name() == 'CATEGORY_3' ? 'border-danger text-danger' : '') +
+             (penaltyCategory.name() == 'CATEGORY_4' ? 'border-danger text-danger' : '') +
+             (penaltyCategory.name() == 'CATEGORY_5' ? 'border-danger text-danger' : '') +
+             (penaltyCategory.name() == 'CATEGORY_6' ? 'border-danger text-danger' : '')
+             }">
+            <div class="card-header">
+                Penalties
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">These are the penalties you risk for the chosen speed increase value:</h6>
+                <ul class="list-group list-group-penaltyCategoryflush">
+                    <li class="list-group-item"
+                        th:classappend="
+                        ${(penaltyCategory.name() == 'CATEGORY_0' ? 'text-success' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_1' ? 'text-warning' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_2' ? 'text-danger text-opacity-75' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_3' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_4' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_5' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_6' ? 'text-danger' : '')
+                    }">
+                        <span>Fine points: </span><span
+                            th:text="${@environment.getProperty('messages.penalties.' + penaltyCategory + '.fine-points' )}"></span>
+                    </li>
+                    <li class="list-group-item"
+                        th:classappend="
+                        ${(penaltyCategory.name() == 'CATEGORY_0' ? 'text-success' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_1' ? 'text-warning' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_2' ? 'text-danger text-opacity-75' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_3' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_4' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_5' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_6' ? 'text-danger' : '')
+                    }">
+                        <span>Penalty points: </span><span
+                            th:text="${@environment.getProperty('messages.penalties.' + penaltyCategory + '.penalty-points')}"></span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 </div>
-<div class="d-flex justify-content">
+<div class="d-flex justify-content-center m-3 border border-dark">
     <div id="map" class="m-3 w-75" style="height: 600px;"></div>
 </div>
-<script>
-    var prevSelectedOption = undefined;
-
-    $(document).ready(function () {
-        $('[id*=speedIncreaseRadioBtn]').on('click', function () {
-            var inputValue = $(this).val();
-            if (inputValue != prevSelectedOption) {
-                $.get('/configurator/speed-info', { option: inputValue }).done(function (fragment) {
-                    $("#infoDiv").replaceWith(fragment);
-                });
-            }
-            prevSelectedOption = inputValue;
-        })
-    });
-</script>
 
 <script th:inline="javascript">
-    <!--    var map = L.map('map').setView([47.6565584, 23.5719843],16);-->
-        var map = L.map('map', { doubleClickZoom: false })
-            .setView([45.9432, 24.9668], 7)
-            .locate({ setView: true, maxZoom: 16 });
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+    var speedIncreaseValue = undefined;
+    $(document).ready(function () {
+        $('#speedIncreaseInput').on('input', function () {
+            var inputValue = $(this).val();
+            $.get('/configurator/speed-info', { option: inputValue }).done(function (fragment) {
+                    $("#infoDiv").replaceWith(fragment);
+            });
+            speedIncreaseValue = inputValue;
+            control.route();
+        })
+    });
 
-        var control = L.Routing.control({
-            routeWhileDragging: true,
-            geocoder: L.Control.Geocoder.nominatim({
-                    serviceUrl: "http://localhost:8081/"
-            }),
-            router: new L.Routing.GraphHopper(undefined, {
-                 serviceUrl: 'http://localhost:8080/route'
-            }),
-        }).addTo(map);
-        control.on('routesfound', function (e) {
-            var routes = e.routes;
-            var summary = routes[0].summary;
-            console.log(summary);
-            alert('Total distance is ' + summary.totalDistance / 1000 + ' km and total time is ' + Math.round(summary.totalTime % 3600 / 60) + ' minutes');
-        });
+    var map = L.map('map', { doubleClickZoom: false })
+        .setView([45.9432, 24.9668], 7)
+        .locate({ setView: true, maxZoom: 16 });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var control = L.Routing.control({
+        routeWhileDragging: true,
+        geocoder: L.Control.Geocoder.nominatim({
+                serviceUrl: "http://localhost:8081/"
+        }),
+        router: new L.Routing.GraphHopper(undefined, {
+             serviceUrl: 'http://localhost:8080/route'
+        }),
+        showAlternatives: true,
+        lineOptions: {
+            styles: [{color: 'blue', opacity: 1, weight: 5}]
+        },
+        altLineOptions: {
+            styles: [{color: 'blue', opacity: 0.25, weight: 5}]
+        }
+    }).addTo(map);
 </script>
-
 </body>
 </html>

@@ -22,4 +22,4 @@ messages:
         penalty-points: 6
     CATEGORY_5:
         fine-points: 9 to 20
-        penalty points: until license is suspended
+        penalty-points: until license is suspended

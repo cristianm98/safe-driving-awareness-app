@@ -38,11 +38,17 @@ public class GhProfileFactory {
 
         log.info("Initializing map with speed increase values for each profile type");
         SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED, 0);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_5_INC, 5);
         SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_10_INC, 10);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_15_INC, 15);
         SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_20_INC, 20);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_25_INC, 25);
         SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_30_INC, 30);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_35_INC, 35);
         SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_40_INC, 40);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_45_INC, 45);
         SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_50_INC, 50);
+        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_55_INC, 55);
     }
 
     @NotNull

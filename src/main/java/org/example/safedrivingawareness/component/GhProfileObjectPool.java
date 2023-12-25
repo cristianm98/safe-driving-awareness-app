@@ -22,11 +22,17 @@ public class GhProfileObjectPool {
     private void initialize() {
         log.info("Initializing map containing predefined GraphHopper profiles");
         GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED));
+        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_5_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_5_INC));
         GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_10_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_10_INC));
+        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_15_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_15_INC));
         GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_20_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_20_INC));
+        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_25_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_25_INC));
         GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_30_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_30_INC));
+        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_35_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_35_INC));
         GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_40_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_40_INC));
+        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_45_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_45_INC));
         GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_50_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_50_INC));
+        GH_PROFILE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_55_INC, profileFactory.createProfile(GhProfileType.CUSTOM_CAR_SPEED_55_INC));
     }
 
     public Profile getProfile(GhProfileType profileType) {

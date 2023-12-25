@@ -5,6 +5,7 @@ import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.ResponsePath;
 import com.graphhopper.config.Profile;
+import com.graphhopper.util.Parameters;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +44,6 @@ public class GraphHopperRouteService {
         log.info("Calculating route between: {} and {} coordinates with speed increased by: {}", start, end, speedIncrease);
         GHRequest req = buildCustomCarGhRequest(start, end, GhProfileType.fromSpeedPc(speedIncrease));
         GHResponse rsp = graphHopper.route(req);
-        ResponsePath path = rsp.getBest();
-        log.info("Distance between start coordinate: {} and end coordinate: {} is: {}", start, end, path.getDistance());
         List<GraphHopperRouteResult.Path> paths = rsp.getAll().stream()
                 .map(responsePath -> {
                     List<List<Double>> coordinates = new ArrayList<>();
@@ -73,6 +72,7 @@ public class GraphHopperRouteService {
         return new GHRequest(start.latitude(), start.longitude(),
                 end.latitude(), end.longitude())
                 .setProfile(profile.getProfileName())
-                .setLocale(Locale.US);
+                .setLocale(Locale.US)
+                .setAlgorithm(Parameters.Algorithms.ALT_ROUTE);
     }
 }

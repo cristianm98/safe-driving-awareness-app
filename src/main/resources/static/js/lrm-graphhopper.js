@@ -425,7 +425,7 @@
                   );
                 }
 
-                baseUrl = this.options.serviceUrl + "?" + locs.join("&") + "&speedIncrease=" + prevSelectedOption;
+                baseUrl = this.options.serviceUrl + "?" + locs.join("&") + "&speedIncrease=" + speedIncreaseValue;
                 return baseUrl;
               },
 
