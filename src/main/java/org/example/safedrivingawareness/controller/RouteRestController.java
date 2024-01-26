@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class GraphHopperRestController {
+public class RouteRestController {
 
     private final GraphHopperRouteService graphHopperRouteService;
 

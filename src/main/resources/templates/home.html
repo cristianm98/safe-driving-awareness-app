@@ -1,17 +1,17 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-
 <head>
+    <meta charset="UTF-8">
     <title>Safe Driving Awareness App</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
           rel="stylesheet"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
           crossorigin="anonymous">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
     <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
@@ -21,20 +21,176 @@
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script type="text/javascript" th:src="@{/js/lrm-graphhopper.js}"></script>
 </head>
-
 <body>
-<div>
-
+<div class="d-flex flex-column justify-content-center w-100">
+    <label for="speedIncreaseInput" class="form-label m-3">Choose speed increase:</label>
+    <div class="d-flex flex-row">
+        <span class="ms-3 me-3">0</span>
+        <input type="range" class="form-range" value="0" min="0" max="55" step="5" id="speedIncreaseInput"
+               oninput="$('#speedIncreaseInputText').html($(this).val())">
+        <span class="ms-3 me-3">55</span>
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <div class="d-flex flex-row">
+        <span class="fs-3 fw-bold" id="speedIncreaseInputText">0</span>
+        <span class="ms-1 fs-3 fw-bold">km/h</span>
+    </div>
+</div>
+<div id="routeInfo" class="d-flex justify-content-center">
+    <div id="routeInfoAccordion" class="accordion w-75">
+        <div class="accordion-item">
+            <h2 id="speedLimitsAccordionHeader" class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#speedLimitsAccordionItem" aria-expanded="false"
+                        aria-controls="speedLimitsAccordionItem">
+                    Show new speed limits
+                </button>
+            </h2>
+            <div id="speedLimitsAccordionItem" class="accordion-collapse collapse"
+                 aria-labelledby="speedLimitsAccordionHeader"
+                 data-bs-parent="#routeInfoAccordion">
+                <div id="speedLimitsAccordionBody" class="accordion-body"
+                     th:classappend="
+                         ${(penaltyCategory.name() == 'CATEGORY_0' ? 'text-success' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_1' ? 'text-warning' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_2' ? 'text-danger text-opacity-75' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_3' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_4' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_5' ? 'text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_6' ? 'text-danger' : '')
+                         }"
+                >
+                    These are the new speed values on different road types which will be used to calculate your route:
+                    <ul class="list-group list-group-flush">
+                        <li th:each="entry: ${speedLimits}" class="list-group-item"
+                            th:classappend="
+                                    ${(penaltyCategory.name() == 'CATEGORY_0' ? 'text-success' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_1' ? 'text-warning' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_2' ? 'text-danger text-opacity-75' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_3' ? 'text-danger' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_4' ? 'text-danger' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_5' ? 'text-danger' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_6' ? 'text-danger' : '')
+                                    }">
+                            <span th:text="${entry.key.displayText}"></span>: <span
+                                th:text="${entry.value}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 id="penaltiesAccordionHeader" class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#penaltiesAccordionItem" aria-expanded="false"
+                        aria-controls="penaltiesAccordionItem">
+                    Show possible penalties
+                </button>
+            </h2>
+            <div id="penaltiesAccordionItem" class="accordion-collapse collapse"
+                 aria-labelledby="penaltiesAccordionHeader"
+                 data-bs-parent="#routeInfoAccordion">
+                <div id="penaltiesAccordionBody" class="accordion-body"
+                     th:classappend="
+                         ${(penaltyCategory.name() == 'CATEGORY_0' ? 'border-success text-success' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_1' ? 'border-warning text-warning' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_2' ? 'border-danger text-danger text-opacity-75' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_3' ? 'border-danger text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_4' ? 'border-danger text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_5' ? 'border-danger text-danger' : '') +
+                         (penaltyCategory.name() == 'CATEGORY_6' ? 'border-danger text-danger' : '')
+                         }"
+                >
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"
+                            th:classappend="
+                                    ${(penaltyCategory.name() == 'CATEGORY_0' ? 'text-success' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_1' ? 'text-warning' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_2' ? 'text-danger text-opacity-75' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_3' ? 'text-danger' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_4' ? 'text-danger' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_5' ? 'text-danger' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_6' ? 'text-danger' : '')
+                                    }">
+                            <span>Fine points: </span><span
+                                th:text="${@environment.getProperty('messages.penalties.' + penaltyCategory + '.fine-points' )}"></span>
+                        </li>
+                        <li class="list-group-item"
+                            th:classappend="
+                                    ${(penaltyCategory.name() == 'CATEGORY_0' ? 'text-success' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_1' ? 'text-warning' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_2' ? 'text-danger text-opacity-75' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_3' ? 'text-danger' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_4' ? 'text-danger' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_5' ? 'text-danger' : '') +
+                                     (penaltyCategory.name() == 'CATEGORY_6' ? 'text-danger' : '')
+                                    }">
+                            <span>Penalty points: </span><span
+                                th:text="${@environment.getProperty('messages.penalties.' + penaltyCategory + '.penalty-points')}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="d-flex flex-column m-3">
+    <div class="d-flex justify-content-start align-items-baseline">
+        <i class="bi bi-info-square"></i>
+        <h6 class="ms-1">Please note the following: </h6>
+    </div>
+    <div class="d-flex flex-column">
+        <ul class="list-group list-group-numbered">
+            <li class="list-group-item">These computations are performed on an ideal scenario, meaning that there are no other traffic participants involved and meteo conditions are favorable.</li>
+            <li class="list-group-item">The selected speed limits might not be applicable on some road segments (e.g. winding roads).</li>
+            <li class="list-group-item">Fuel consumption increase is not calculated, but take into account that a significant amount of fuel is consumed when a more aggressive driving style is chosen.</li>
+        </ul>
+    </div>
+</div>
+<div class="d-flex justify-content-center m-3 border border-dark">
+    <div id="map" class="m-3 w-75" style="height: 600px;"></div>
 </div>
 
-<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item" th:each="crumb : ${breadcrumbs}">
-            <a th:if="${crumb == 'Speed Configurator'}" th:text="${crumb}" href="/configurator"></a>
-            <a th:unless="${crumb == 'Speed Configurator'}" th:text="${crumb}"></a>
-        </li>
-    </ol>
-</nav>
+<script th:inline="javascript">
+    var speedIncreaseValue = 0;
+    $(document).ready(function() {
+        $('#speedIncreaseInput').on('input', function () {
+            var inputValue = $(this).val();
+            $.get('/penalties', { speedValue: inputValue }).done(function (fragment) {
+                    $("#penaltiesAccordionBody").replaceWith(fragment);
+            });
+            $.get('/speed-limits', { speedValue: inputValue }).done(function (fragment) {
+                    $("#speedLimitsAccordionBody").replaceWith(fragment);
+            });
+            speedIncreaseValue = inputValue;
+            control.route();
+        })
+    });
 
+    var map = L.map('map', { doubleClickZoom: false })
+        .setView([45.9432, 24.9668], 7)
+        .locate({ setView: true, maxZoom: 16 });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var control = L.Routing.control({
+        routeWhileDragging: true,
+        geocoder: L.Control.Geocoder.nominatim({
+                serviceUrl: "http://localhost:8081/"
+        }),
+        router: new L.Routing.GraphHopper(undefined, {
+             serviceUrl: 'http://localhost:8080/route'
+        }),
+        showAlternatives: true,
+        lineOptions: {
+            styles: [{color: 'blue', opacity: 1, weight: 5}]
+        },
+        altLineOptions: {
+            styles: [{color: 'blue', opacity: 0.25, weight: 5}]
+        }
+    }).addTo(map);
+</script>
 </body>
 </html>

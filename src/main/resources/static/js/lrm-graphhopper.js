@@ -352,8 +352,7 @@
                   i,
                   path;
 
-                context = context || callback; 
-                console.log(response);
+                context = context || callback;
                 for (i = 0; i < response.paths.length; i++) {
                   path = response.paths[i];
                   coordinates = path.points.coordinates;
