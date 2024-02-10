@@ -1,8 +1,12 @@
 spring:
   output.ansi.enabled: always
-service:
-  nominatim:
-    api: http://localhost:8081
+# TODO add configuration metadata through Java annotations
+graphHopper:
+  osmFilePath: /app/resources/romania-latest.osm.pbf
+  graphCachePath: /data/cache/routing-graph-cache 
+
+nominatim:
+  api: http://localhost:8081
 messages:
   penalties:
     CATEGORY_0:

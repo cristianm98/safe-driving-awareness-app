@@ -1,24 +1,29 @@
 package org.example.safedrivingawareness.component;
 
+import java.util.EnumMap;
+import java.util.Map;
+
+import org.example.safedrivingawareness.model.CustomGhProfileType;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
+
 import com.graphhopper.config.Profile;
 import com.graphhopper.json.Statement;
 import com.graphhopper.routing.ev.RoadClass;
 import com.graphhopper.util.CustomModel;
+
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.example.safedrivingawareness.model.GhProfileType;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Component;
 
-import java.util.EnumMap;
-import java.util.Map;
-
+/*
+ * Factory used for creating custom GraphHopper car profiles
+ * @see Profile
+ */
 @Component
 @Slf4j
 public class GhProfileFactory {
 
     private static final String CAR_VEHICLE_TYPE = "car";
-    private static final Map<GhProfileType, Integer> SPEED_INCREASE_MAP = new EnumMap<>(GhProfileType.class);
     private static final Map<RoadClass, Integer> DEFAULT_AVERAGE_SPEED_MAP = new EnumMap<>(RoadClass.class);
 
     @PostConstruct
@@ -35,26 +40,24 @@ public class GhProfileFactory {
         DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.SERVICE, 20);
         DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.ROAD, 20);
         DEFAULT_AVERAGE_SPEED_MAP.put(RoadClass.TRACK, 15);
-
-        log.info("Initializing map with speed increase values for each profile type");
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_DEFAULT_SPEED, 0);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_5_INC, 5);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_10_INC, 10);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_15_INC, 15);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_20_INC, 20);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_25_INC, 25);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_30_INC, 30);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_35_INC, 35);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_40_INC, 40);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_45_INC, 45);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_50_INC, 50);
-        SPEED_INCREASE_MAP.put(GhProfileType.CUSTOM_CAR_SPEED_55_INC, 55);
     }
 
+    /**
+     * Create a GraphHopper car profile based on the given custom profile type. From the given profile type
+     * the speed increase corresponding to it is retrieved and used to generate the new average speed values 
+     * for all the road classes defined in the {@link DEFAULT_AVERAGE_SPEED_MAP}. The new values are added 
+     * to a GraphHopper CustomModel, which in turn is set to the returned profile object.
+     * 
+     * @param profileType profile's type
+     * @return a new GraphHopper car profile with updated average speed values
+     * @see CustomGhProfileType
+     * @see CustomModel
+     * @see Profile
+     */
     @NotNull
-    public Profile createProfile(GhProfileType profileType) {
+    public Profile createProfile(CustomGhProfileType profileType) {
         CustomModel customModel = new CustomModel();
-        int speedIncreaseValue = SPEED_INCREASE_MAP.get(profileType);
+        int speedIncreaseValue = profileType.getSpeedIncreaseValue();
         DEFAULT_AVERAGE_SPEED_MAP.forEach((key, value) -> {
             int defaultAverageSpeed = value;
             float multiplyValue = 1 + speedIncreaseValue * 1.0f / defaultAverageSpeed;
@@ -63,11 +66,11 @@ public class GhProfileFactory {
                     Statement.Op.MULTIPLY, String.valueOf(multiplyValue)));
         });
         log.debug("Custom model used for profile: {} is: {}", profileType, customModel);
-        Profile profile = new Profile(profileType.getProfileName());
+        Profile profile = new Profile(profileType.nameToLowercase());
         profile.setVehicle(CAR_VEHICLE_TYPE);
         profile.setTurnCosts(false);
         profile.setCustomModel(customModel);
-        log.debug("Created custom profile: {}", profile);
+        log.info("Created custom profile: {}", profile);
         return profile;
     }
 }

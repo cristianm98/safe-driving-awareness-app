@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  spring-boot-server:
+    image: safe-driving-awareness:latest
+    container_name: safe-driving-awareness-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - safe-driving-awareness-app-data:/app/data
+  nominatim:
+    container_name: nominatim
+    build: https://github.com/mediagis/nominatim-docker.git#master:4.3
+    ports:
+      - "5432:5432"
+      - "8081:8080"
+    volumes:
+      - nominatim-data:/var/lib/postgresql/14/main
+    environment:
+      - PBF_URL=https://download.geofabrik.de/europe/romania-latest.osm.pbf
+      - FREEZE=true
+      - POSTGRES_SHARED_BUFFERS=2048MB
+      - POSTGRES_MAINTENANCE_WORK_MEM=1024MB
+      - POSTGRES_AUTOVACUUM_WORK_MEM=2048MB
+      - POSTGRES_WORK_MEM=50MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=2048MB
+      - POSTGRES_SYNCHRONOUS_COMMIT=off
+      - POSTGRES_MAX_WAL_SIZE=1024MB
+      - POSTGRES_CHECKPOINT_TIMEOUT=10min
+      - POSTGRES_CHECKPOINT_COMPLETION_TARGET=0.9
+      - NOMINATIM_PASSWORD=postgres
+    shm_size: 1gb
+volumes:
+  nominatim-data:
+  safe-driving-awareness-app-data:
+# TODO add network bridge

@@ -1,14 +1,20 @@
 package org.example.safedrivingawareness.dto;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
-public record GraphHopperRouteResult(List<Path> paths) {
+/**
+ * DTO representing the result returned by the routing controller. The structure of the DTO is the same as 
+ * the one from the GraphHopepr Routing API:
+ * @see <a href="https://docs.graphhopper.com/#operation/getRoute">GraphHopper Routing API</a>
+ */
+public record GraphHopperRouteResponse(List<Path> paths) {
 
     @Data
     @Builder

@@ -2,7 +2,13 @@ package org.example.safedrivingawareness.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record NominatimSearchResult(
+/**
+ * DTO containing the relevant information returned by the Nominatim Search API.
+ * @see <a href="https://nominatim.org/release-docs/latest/api/Search/#json-with-address-details">
+ * Nominatim Search API response
+ * </a>
+ */
+public record NominatimSearchResponse(
         @JsonProperty("place_id")
         String placeId,
         @JsonProperty("lat")

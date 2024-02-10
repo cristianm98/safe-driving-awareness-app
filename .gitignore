@@ -33,3 +33,6 @@ build/
 .vscode/
 /mvnw
 /mvnw.cmd
+
+### Project Files ###
+src/main/resources/romania-latest.osm.pbf
